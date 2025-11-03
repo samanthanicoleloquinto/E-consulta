@@ -28,37 +28,21 @@ import matplotlib.pyplot as plt
 HERE = Path(__file__).parent.resolve()
 
 # Automatically read DB credentials from your existing PHP config file
-def load_db_config(index_php_path=None):
-    """
-    Load MySQL credentials.
-    - Local: read from index.php (XAMPP)
-    - Render: use environment variables
-    """
+def load_db_config(index_php_path=r"C:\\xampp\\htdocs\\E-consulta\\index.php"):
     try:
-        # 🖥️ LOCAL (Windows / XAMPP)
-        local_path = index_php_path or r"C:\\xampp\\htdocs\\E-consulta\\index.php"
-        if Path(local_path).exists():
-            content = Path(local_path).read_text(encoding="utf-8", errors="ignore")
-            match = re.search(
-                r'mysqli\(["\'](.*?)["\'],\s*["\'](.*?)["\'],\s*["\'](.*?)["\'],\s*["\'](.*?)["\']\)',
-                content
-            )
-            if match:
-                host, user, password, database = match.groups()
-                return {"host": host, "user": user, "password": password, "database": database}
-        
-        # 🌐 RENDER (Environment Variables)
-        host = os.getenv("DB_HOST", "localhost")
-        user = os.getenv("DB_USER", "root")
-        password = os.getenv("DB_PASS", "")
-        database = os.getenv("DB_NAME", "econsulta")
-
-        return {"host": host, "user": user, "password": password, "database": database}
-
+        content = Path(index_php_path).read_text(encoding="utf-8", errors="ignore")
+        match = re.search(
+            r'mysqli\(["\'](.*?)["\'],\s*["\'](.*?)["\'],\s*["\'](.*?)["\'],\s*["\'](.*?)["\']\)',
+            content
+        )
+        if match:
+            host, user, password, database = match.groups()
+        else:
+            host, user, password, database = "localhost", "root", "", "econsulta"
     except Exception as e:
-        print(f"[Warning] Could not read DB config: {e}")
-        return {"host": "localhost", "user": "root", "password": "", "database": "econsulta"}
-
+        print(f"[Warning] Could not read index.php: {e}")
+        host, user, password, database = "localhost", "root", "", "econsulta"
+    return {"host": host, "user": user, "password": password, "database": database}
 
 
 MONTHS = ["January","February","March","April","May","June",
@@ -482,4 +466,3 @@ def forecast(
 
     except Exception as e:
         _fail500("Failed in /forecast", e)
-
