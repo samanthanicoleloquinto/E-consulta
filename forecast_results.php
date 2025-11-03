@@ -2,7 +2,7 @@
 /* ================================================================
    📘 Barangay Forecast Dashboard
    ================================================================ */
-$API_BASE = "http://localhost:8000";
+$API_BASE = "https://e-consulta.onrender.com";
 
 function fetch_json($url) {
   $ctx = stream_context_create(['http' => ['timeout' => 10, 'ignore_errors' => true]]);
@@ -571,3 +571,4 @@ new Chart(document.getElementById('chart_forecast'), {
 </script>
 </body>
 </html>
+
